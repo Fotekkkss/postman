@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Git checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Fotekkkss/postman.git'
+            }
+        }
+        stage('Run api tests') {
+            steps {
+                powershell 'newman run comments_test.json -r htmlextra --reporter-htmlextra-export "test.html"'
+            }
+        }
+        stage('Publish report') {
+            steps {
+                publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: '', reportFiles: 'test.html', reportName: 'HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+            }
+        }
+    }
+}
